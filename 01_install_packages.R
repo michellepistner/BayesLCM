@@ -7,6 +7,6 @@
 source(config.R)
 
 ##Installing packages into the packages dir
-install.packages(c("data.table","MCMCpack","plyr","MASS","ggplot2","synthpop"),lib = packages.dir,repos='http://cran.us.r-project.org')
+install.packages(c("data.table","MCMCpack","plyr","MASS","ggplot2","synthpop","rlang","tidyr"),lib = packages.dir,repos='http://cran.us.r-project.org')
 
 

@@ -9,10 +9,13 @@ base.dir = getwd()
 paste("The base directory is ", base.dir ,sep="")
 
 data.dir = paste(base.dir,"/data",sep="")
-paste("The data directory is ", base.dir ,sep="")
+paste("The data directory is ", data.dir ,sep="")
 
 results.dir = paste(base.dir,"/results",sep="")
-paste("The results directory is ", base.dir ,sep="")
+paste("The results directory is ", results.dir ,sep="")
 
 packages.dir = paste(base.dir,"/packages",sep="")
-paste("The packages directory is ", base.dir ,sep="")
+paste("The packages directory is ", packages.dir ,sep="")
+
+python.dir = paste(base.dir,"/python",sep="")
+paste("The python directory is ", python.dir ,sep="")
