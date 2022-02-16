@@ -1,3 +1,3 @@
-# Code to Accompany ``A Bayesian Latent Class Approach to Private Contingency Table Release''
+# The `PrivLCM` package
 
-This code creates all graphs and output. Computation times can be long.
+Welcome to the `PrivLCM` package. Here, we implement the approach of [Nixon et. al (2022)](https://arxiv.org/abs/2201.10545). 
