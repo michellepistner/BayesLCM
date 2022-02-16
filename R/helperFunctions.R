@@ -93,34 +93,22 @@ twoWay.probs.vectorized <- function(counts.vec, mix.probs, class.probs, index1=N
 #' @export
 fullTab.probs <- function(mix.probs, class.probs, vals, sample = NULL){
   ##Vals: a P dim vector
-  if(length(vals) != dim(class.probs[[1]])[3]){
+  if(length(vals) != dim(class.probs)[4]){
     return("Evaluated combination is of the wrong length!!")
   }
-
   ##Now, need to find the prob of each combination
   ##Easy way to do it: first find the prob of the combination for each latent class
   ##Then, multiply by the mixing probabilities
-
+  
   if(is.null(sample)){
-    ##Take the mean and compute
-    mix.avg = apply(mix.probs, 2, "mean")
-    class.avg = list()
-    for(i in 1:length(class.probs)){
-      class.avg[[i]] = apply(class.probs[[i]], c(2,3), "mean")
-    }
-
-    prob.vec = rep(1, length(mix.avg))
-    for(i in 1:length(vals)){
-      prob.vec = prob.vec * class.avg[[vals[i]]][,i]
-    }
-    prob = sum(mix.avg * prob.vec)
-  } else{
-    prob.vec = rep(1, ncol(mix.probs))
-    for(i in 1:length(vals)){
-      prob.vec = prob.vec * class.probs[[vals[i]]][sample,,i]
-    }
-    prob = sum(mix.probs[sample,] * prob.vec)
+    sample = 1
   }
-
+  
+  prob.vec = rep(1, ncol(mix.probs))
+  for(i in 1:length(vals)){
+    prob.vec = prob.vec * class.probs[as.numeric(vals[i]), sample,,i]
+  }
+  prob = sum(mix.probs[sample,] * prob.vec)
+  
   return(prob)
 }#End of function
