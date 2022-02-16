@@ -2,7 +2,7 @@
 % Please edit documentation in R/modelFunctions.R
 \name{mcmc.sampler}
 \alias{mcmc.sampler}
-\title{The binomial likelihood function for a specific count and probability vector}
+\title{The main sampling function for the Bayesian Latent Class approach}
 \usage{
 mcmc.sampler(
   counts,
@@ -14,8 +14,9 @@ mcmc.sampler(
   samp.size,
   E.var = NULL,
   .calculateFullTabProbs = FALSE,
-  .PiTuningParam = 10,
+  .PiTuningParam = 0.5,
   .PsiTuningParam = 10,
+  .methodPi = "normal",
   cl = NULL
 )
 }
@@ -42,11 +43,13 @@ mcmc.sampler(
 
 \item{.PsiTuningParam}{A small constant used to tune the proposal distribution of \eqn{\psi}.}
 
+\item{.methodPi}{What proposal distribution ("normal" or "dirichlet") should be used for sampling for pi?}
+
 \item{cl}{Cluster used if parallelized}
 }
 \value{
 A list containing samples of \eqn{\Tilde{M}}, \eqn{\pi}, and \eqn{\psi} as well as marginal probabilities and full table probabilities (if desired). Also contains acceptance rates for all of the parameters.
 }
 \description{
-The binomial likelihood function for a specific count and probability vector
+The main sampling function for the Bayesian Latent Class approach
 }

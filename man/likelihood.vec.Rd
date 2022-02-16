@@ -14,7 +14,7 @@ likelihood.vec(
   comp.probs,
   index = NULL,
   par = FALSE,
-  clust
+  clust = cl
 )
 }
 \arguments{

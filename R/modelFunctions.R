@@ -88,7 +88,9 @@ likelihood.vec <- function(counts,samp.size, G, sample, counts.mat, mix.probs, c
 #' @param .calculateFullTabProbs A Boolean. Do we calculate the full table probabilities? It can be expensive to do so when dimension or the number of latent classes is large.
 #' @param .PiTuningParam A small constant used to tune the proposal distribution of \eqn{\pi}.
 #' @param .PsiTuningParam A small constant used to tune the proposal distribution of \eqn{\psi}.
+#' @param .methodPi What proposal distribution ("normal" or "dirichlet") should be used for sampling for pi?
 #' @param cl Cluster used if parallelized
+#' @importFrom stats dgamma rnorm runif
 #' @return A list containing samples of \eqn{\Tilde{M}}, \eqn{\pi}, and \eqn{\psi} as well as marginal probabilities and full table probabilities (if desired). Also contains acceptance rates for all of the parameters.
 #' @export
 mcmc.sampler <- function(counts, counts.mat, eps = 1, P, G = 5, nsamples = 2000, samp.size, E.var = NULL, .calculateFullTabProbs = FALSE, .PiTuningParam = 0.5, .PsiTuningParam = 10, .methodPi = "normal", cl = NULL){
