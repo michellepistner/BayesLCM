@@ -1,0 +1,91 @@
+---
+title: "Using the `PrivLCM' package"
+author: "Michelle Nixon"
+date: "1/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Welcome! The privLCM package provides an interface to creating differentially-private contingency tables using a Bayesian Latent Class approach. Samples can be drawn using the `mcmc.sampler` function in the package.
+
+This function works for any binary table of arbitrary dimension. However, computation times can be long if dimension and/or the number of latent classes is high. This is primarily due to the computation of the two-way marginal probabilities which requires enumerating over all possible combinations of the other variables.
+
+### A Simple Example
+
+We will implement our method using a $2^5$ table with $G=3$ latent classes. First, let's simulate some data. Let N = 10,000.
+
+```{r dataSim}
+set.seed(1234)
+N=10000
+P=5
+
+##Simulating data
+prob_var = runif(5)
+
+##Creating the data frame
+df = data.frame("Var1" = sample(1:2, N, replace = TRUE, prob = c(prob_var[1], 1-prob_var[1])),
+                "Var2" = sample(1:2, N, replace = TRUE, prob = c(prob_var[2], 1-prob_var[2])),
+                "Var3" = sample(1:2, N, replace = TRUE, prob = c(prob_var[3], 1-prob_var[3])),
+                "Var4" = sample(1:2, N, replace = TRUE, prob = c(prob_var[4], 1-prob_var[4])),
+                "Var5" = sample(1:2, N, replace = TRUE, prob = c(prob_var[5], 1-prob_var[5])))
+
+head(df)
+```
+
+Now, we need to calculate the two-way marginals. `privLCM` also requires a matrix that encodes what each count represent. This matrix should only have two non-`NA` entries per row. The other two entries denote which variables (as denoted by column position) and values (as denoted by a `1` or `2` in each row). The first row of the matrix tells the sampler which marginal the first count represents and so on. Let's calculate both pieces:
+
+```{r countsMat}
+freq = c()
+P = 5
+comb.mat = matrix(ncol = P)
+
+for(i in 1:(P-1)){
+  for(j in (i+1):P){
+    counts = plyr::count(df[,c(i,j)])
+    freq = c(freq, counts$freq)
+    tmp.mat = matrix(NA, nrow = 4, ncol = P)
+    tmp.mat[,i] = counts[,1]
+    tmp.mat[,j] = counts[,2]
+    comb.mat = rbind(comb.mat, tmp.mat)
+  }
+}
+
+comb.mat = comb.mat[-1,]
+head(comb.mat)
+```
+
+Now, we are ready to go! Other inputs that we need to specifiy are `P` which denotes the dimension of the table (in this case 5), `G` which denotes the number of latent classes, `eps` denotes the desired epsilon value, and `samp.size` which denotes number of observations in the data. We can also control the number of samples drawn with `nsamples`.
+
+
+```{r modelFitting}
+library(privLCM)
+library(data.table)
+library(Rfast)
+library(parallel)
+
+cl = makeCluster(detectCores()-1)
+clusterExport(cl, varlist = c("twoWay.probs.vectorized", "row.prob.vec","getProbs", "data.table", "rowprods", "P"))
+
+samps = mcmc.sampler(freq, comb.mat, eps = 1, P = P, G = 3, nsamples = 5000, samp.size = N, cl = cl, .PiTuningParam = 0.075, .PsiTuningParam =75)
+stopCluster(cl)
+```
+Now, a quick word about the results that we return. The output of `mcmc.sampler` is a list. This list contains many elements, including samples from all of our parameters and acceptance rates. It also contains marginal probabilities calculated for each estimate and full probabilities (if desired)
+
+```{r whatList}
+names(samps)
+```
+
+Now, let's look at a few graphs. First, lets look at trace plots for some of the marginal probabilities.
+
+```{r trace1}
+plot(samps$marg_probs[-c(1:1000),1], ylab = "1st Marginal Probability", xlab = "Iterate")
+abline(h = freq[1]/N, col = "red", lty = "dashed")
+```
+
+```{r trace2}
+plot(samps$marg_probs[-c(1:1000),2], ylab = "2nd Marginal Probability", xlab = "Iterate")
+abline(h = freq[2]/N, col = "red", lty = "dashed")
+```
