@@ -1,3 +1,7 @@
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/michellepistner/BayesLCM/workflows/R-CMD-check/badge.svg)](https://github.com/michellepistner/BayesLCM/actions)
+  <!-- badges: end -->
+
 # The `PrivLCM` package
 
 Welcome to the `PrivLCM` package. Here, we implement the approach of [Nixon et. al (2022)](https://arxiv.org/abs/2201.10545). 

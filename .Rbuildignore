@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^example.html$
 ^example.Rmd$
+^README.md$
+^\.github$
+^\paper$
